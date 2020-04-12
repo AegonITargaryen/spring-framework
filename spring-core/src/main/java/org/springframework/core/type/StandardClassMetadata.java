@@ -26,7 +26,7 @@ import org.springframework.util.StringUtils;
 /**
  * {@link ClassMetadata} implementation that uses standard reflection
  * to introspect a given {@code Class}.
- *
+ * 标准的类元数据，记录bean的Class
  * @author Juergen Hoeller
  * @since 2.5
  */

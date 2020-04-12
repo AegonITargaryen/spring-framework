@@ -34,6 +34,7 @@ import org.springframework.util.Assert;
  * {@link org.springframework.context.annotation.ScannedGenericBeanDefinition},
  * which also implements the AnnotatedBeanDefinition interface).
  *
+ * 使用注解注册的bean的definition，多了一个metadata字段，用于记录所有的注解
  * @author Juergen Hoeller
  * @author Chris Beams
  * @since 2.5

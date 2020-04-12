@@ -37,7 +37,7 @@ import org.springframework.util.Assert;
  * Convenient adapter for programmatic registration of annotated bean classes.
  * This is an alternative to {@link ClassPathBeanDefinitionScanner}, applying
  * the same resolution of annotations but for explicitly registered classes only.
- *
+ * 为拥有注解的java文件注册bean
  * @author Juergen Hoeller
  * @author Chris Beams
  * @author Sam Brannen
@@ -209,21 +209,30 @@ public class AnnotatedBeanDefinitionReader {
 	 * @param definitionCustomizers one or more callbacks for customizing the
 	 * factory's {@link BeanDefinition}, e.g. setting a lazy-init or primary flag
 	 * @since 5.0
+	 *
+	 * 注册一个bean，这个bean可以包含类注解
 	 */
 	<T> void doRegisterBean(Class<T> annotatedClass, @Nullable Supplier<T> instanceSupplier, @Nullable String name,
 			@Nullable Class<? extends Annotation>[] qualifiers, BeanDefinitionCustomizer... definitionCustomizers) {
 
 		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(annotatedClass);
+		// 根据{@code @Conditional}注释判断该bean的注册是否应该被跳过。
 		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
 			return;
 		}
-
+		// 设置创建bean实例的回调，如果非null，则bean工厂通过该回调类生成bean实例
 		abd.setInstanceSupplier(instanceSupplier);
+		// 根据@Scope字段获得bean的作用域信息，单例/原型？以及获得bean的代理属性。
 		ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(abd);
 		abd.setScope(scopeMetadata.getScopeName());
+		// 获得当前 bean 的名字
 		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry));
 
 		AnnotationConfigUtils.processCommonDefinitionAnnotations(abd);
+		// 解析额外的限定符注解。
+		// @Qualifier:注入指定名称的bean。
+		// @Primary：自动装配时当出现多个Bean候选者时，被注解为@Primary的Bean将作为首选者。
+		// @Lazy： 延迟加载
 		if (qualifiers != null) {
 			for (Class<? extends Annotation> qualifier : qualifiers) {
 				if (Primary.class == qualifier) {
@@ -237,12 +246,15 @@ public class AnnotatedBeanDefinitionReader {
 				}
 			}
 		}
+		// 回调。自定义bean注册。待学习。
 		for (BeanDefinitionCustomizer customizer : definitionCustomizers) {
 			customizer.customize(abd);
 		}
-
+		// 类的beanDefinition被包裹在BeanDefinitionHolder中。创建definitionHolder。
 		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName);
+		// 完善definitionHolder信息。此处的registry即AnnotationConfigApplicationContext。
 		definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
+		// 注册beanDefinition
 		BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, this.registry);
 	}
 

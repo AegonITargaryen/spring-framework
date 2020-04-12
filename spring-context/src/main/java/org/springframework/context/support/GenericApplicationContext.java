@@ -88,6 +88,8 @@ import org.springframework.util.Assert;
  * @see #refresh()
  * @see org.springframework.beans.factory.xml.XmlBeanDefinitionReader
  * @see org.springframework.beans.factory.support.PropertiesBeanDefinitionReader
+ *
+ * 通用的应用上下文对象
  */
 public class GenericApplicationContext extends AbstractApplicationContext implements BeanDefinitionRegistry {
 
@@ -105,6 +107,7 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
 	 * Create a new GenericApplicationContext.
 	 * @see #registerBeanDefinition
 	 * @see #refresh
+	 * 创建一个 spring bean 工厂。每个上下文都需要一个 bean 工厂。这儿使用 DefaultListableBeanFactory 类型
 	 */
 	public GenericApplicationContext() {
 		this.beanFactory = new DefaultListableBeanFactory();
@@ -314,6 +317,7 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
 	// Implementation of BeanDefinitionRegistry
 	//---------------------------------------------------------------------
 
+	// 调用bean工厂的registerBeanDefinition函数注入beanDefinition对象
 	@Override
 	public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition)
 			throws BeanDefinitionStoreException {

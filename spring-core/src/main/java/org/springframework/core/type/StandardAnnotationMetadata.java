@@ -31,6 +31,8 @@ import org.springframework.util.MultiValueMap;
  * {@link AnnotationMetadata} implementation that uses standard reflection
  * to introspect a given {@link Class}.
  *
+ * 比标准的类元数据 {@link org.springframework.core.type.StandardClassMetadata} 多了个annotations字段，用于记录该类的注解信息。
+ * 一个nestedAnnotationsAsMap 字段，用于确定是否以 {@link org.springframework.core.annotation.AnnotationAttributes} 类的方式来返回注解信息
  * @author Juergen Hoeller
  * @author Mark Fisher
  * @author Chris Beams

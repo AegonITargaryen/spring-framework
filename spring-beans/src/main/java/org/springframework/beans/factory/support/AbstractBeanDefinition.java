@@ -55,7 +55,7 @@ import org.springframework.util.StringUtils;
  * @see ChildBeanDefinition
  */
 @SuppressWarnings("serial")
-public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccessor
+		public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccessor
 		implements BeanDefinition, Cloneable {
 
 	/**
@@ -137,6 +137,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 	public static final String INFER_METHOD = "(inferred)";
 
 
+	// 当前bean的class类
 	@Nullable
 	private volatile Object beanClass;
 
@@ -160,6 +161,7 @@ public abstract class AbstractBeanDefinition extends BeanMetadataAttributeAccess
 
 	private final Map<String, AutowireCandidateQualifier> qualifiers = new LinkedHashMap<>();
 
+	// 回调方法，如为非null，则bean工厂使用该回调返回对象
 	@Nullable
 	private Supplier<?> instanceSupplier;
 

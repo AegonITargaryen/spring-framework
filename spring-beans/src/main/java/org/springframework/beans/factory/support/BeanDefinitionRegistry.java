@@ -44,6 +44,8 @@ import org.springframework.core.AliasRegistry;
  * @see org.springframework.context.support.GenericApplicationContext
  * @see org.springframework.beans.factory.xml.XmlBeanDefinitionReader
  * @see PropertiesBeanDefinitionReader
+ *
+ * 该接口是定义了注册beanDefinition的方法，一般bean工厂会继承该接口(应用上下文也包含一个bean工厂，因此也继承该接口，调用所包含的bean工厂的具体实现)
  */
 public interface BeanDefinitionRegistry extends AliasRegistry {
 

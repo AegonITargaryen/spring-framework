@@ -49,7 +49,8 @@ import org.springframework.util.Assert;
  * @see AnnotatedBeanDefinitionReader
  * @see ClassPathBeanDefinitionScanner
  * @see org.springframework.context.support.GenericXmlApplicationContext
- */
+ *
+ * 应用上下文的一个实现，用于接收使用注解的class，生成相应的bean. AnnotatedBeanDefinitionReader 用于解析使用注解标注的class文件并生成bean*/
 public class AnnotationConfigApplicationContext extends GenericApplicationContext implements AnnotationConfigRegistry {
 
 	private final AnnotatedBeanDefinitionReader reader;
