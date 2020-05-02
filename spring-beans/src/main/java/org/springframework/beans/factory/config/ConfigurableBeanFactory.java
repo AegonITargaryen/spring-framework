@@ -85,6 +85,7 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, Single
 	 * to be resolved once the factory processes the bean definition.
 	 * @param beanClassLoader the class loader to use,
 	 * or {@code null} to suggest the default class loader
+	 * 为BeanFactory设置ClassLoader，此处的beanClassLoader只用于加载beanDefinition
 	 */
 	void setBeanClassLoader(@Nullable ClassLoader beanClassLoader);
 
@@ -167,6 +168,7 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory, Single
 	 * the need for synchronization on custom editors; hence, it is generally
 	 * preferable to use this method instead of {@link #registerCustomEditor}.
 	 * @param registrar the PropertyEditorRegistrar to register
+	 * 属性编辑器注册器。用于生成PropertyEditor对象。PropertyEditor用于非字符串类型参数值的转换等功能
 	 */
 	void addPropertyEditorRegistrar(PropertyEditorRegistrar registrar);
 
