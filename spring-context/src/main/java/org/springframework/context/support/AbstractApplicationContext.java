@@ -518,38 +518,49 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
 			// Prepare this context for refreshing.
+			// 刷新前准备。设置上下文状态，获取属性，验证必要的属性
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
+			// 刷新并获取新的beanFactory
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
+			// 配置标准的beanFactory，设置ClassLoader，设置SpEL表达式解析器，添加忽略注入的接口，添加bean，添加bean后置处理器
 			prepareBeanFactory(beanFactory);
 
+			// 此时，所有的beanDefinition已经加载，但是还没有实例化
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
+				// prepareBeanFactory方法的扩展。允许用户自定义处理
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
-				// 调用 bean factory 后置处理器
+				// 调用 bean factory 后置处理器（实现接口BeanFactoryPostProcessor的bean）
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
+				// 实例化和注册beanFactory中扩展了BeanPostProcessor的bean
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
+				// 初始化国际化工具类MessageSource
 				initMessageSource();
 
 				// Initialize event multicaster for this context.
+				// 初始化事件广播器
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
+				// 在容器刷新的时候自定义逻辑
 				onRefresh();
 
 				// Check for listener beans and register them.
+				// 注册监听器
 				registerListeners();
 
 				// Instantiate all remaining (non-lazy-init) singletons.
+				// 实例化所有剩余的（非懒加载）单例
 				finishBeanFactoryInitialization(beanFactory);
 
 				// Last step: publish corresponding event.
@@ -631,6 +642,8 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * @return the fresh BeanFactory instance
 	 * @see #refreshBeanFactory()
 	 * @see #getBeanFactory()
+	 *
+	 * 刷新并获取新的 BeanFactory
 	 */
 	protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
 		refreshBeanFactory();

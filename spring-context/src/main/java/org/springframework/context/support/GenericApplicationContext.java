@@ -260,6 +260,10 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
 	 * Do nothing: We hold a single internal BeanFactory and rely on callers
 	 * to register beans through our public methods (or the BeanFactory's).
 	 * @see #registerBeanDefinition
+	 *
+	 * 刷新beanFactory的serializationId
+	 *
+	 * beanFactory在默认构造函数里实例化，由GenericApplicationContext的子类在构造函数里加载beanDefinitions
 	 */
 	@Override
 	protected final void refreshBeanFactory() throws IllegalStateException {
