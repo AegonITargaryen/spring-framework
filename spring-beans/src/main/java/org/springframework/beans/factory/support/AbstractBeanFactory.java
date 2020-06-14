@@ -394,8 +394,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
 	@Override
 	public boolean containsBean(String name) {
+		// 对name进行必要的转换
 		String beanName = transformedBeanName(name);
+		// 该beanName有对应的bean definition，或者单例bean
 		if (containsSingleton(beanName) || containsBeanDefinition(beanName)) {
+			// name开头不为&返回true，如果带了&但是是FactoryBean也返回true
 			return (!BeanFactoryUtils.isFactoryDereference(name) || isFactoryBean(name));
 		}
 		// Not found -> check parent.
@@ -859,9 +862,12 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 		// Remove from old position, if any
 		this.beanPostProcessors.remove(beanPostProcessor);
 		// Track whether it is instantiation/destruction aware
+
+		// InstantiationAwareBeanPostProcessor有两个接口，一个在实例化之前调用，一个在实例化之后初始化之前被调用
 		if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
 			this.hasInstantiationAwareBeanPostProcessors = true;
 		}
+		// DestructionAwareBeanPostProcessor 有一个接口，被销毁前调用
 		if (beanPostProcessor instanceof DestructionAwareBeanPostProcessor) {
 			this.hasDestructionAwareBeanPostProcessors = true;
 		}
@@ -1127,6 +1133,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 	 * @return the transformed bean name
 	 */
 	protected String transformedBeanName(String name) {
+		// 如果name代表factoryBean，那么name前就带有&前缀，去掉此前缀
+		// 如果这个name是beanName，则直接返回，如果name是别名，则在aliasMap中查找对应的beanName，再返回
 		return canonicalName(BeanFactoryUtils.transformedBeanName(name));
 	}
 

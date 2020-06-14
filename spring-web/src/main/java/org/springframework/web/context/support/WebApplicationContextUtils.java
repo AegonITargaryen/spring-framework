@@ -178,6 +178,8 @@ public abstract class WebApplicationContextUtils {
 	 * with the given BeanFactory, as used by the WebApplicationContext.
 	 * @param beanFactory the BeanFactory to configure
 	 * @param sc the ServletContext that we're running within
+	 *
+	 * 注册web应用，bean的scope
 	 */
 	public static void registerWebApplicationScopes(ConfigurableListableBeanFactory beanFactory,
 			@Nullable ServletContext sc) {
@@ -191,6 +193,7 @@ public abstract class WebApplicationContextUtils {
 			sc.setAttribute(ServletContextScope.class.getName(), appScope);
 		}
 
+		// resolvableDependencies 用于存储一些特殊的依赖。这些对象没有注册进IOC 容器中
 		beanFactory.registerResolvableDependency(ServletRequest.class, new RequestObjectFactory());
 		beanFactory.registerResolvableDependency(ServletResponse.class, new ResponseObjectFactory());
 		beanFactory.registerResolvableDependency(HttpSession.class, new SessionObjectFactory());
@@ -216,15 +219,21 @@ public abstract class WebApplicationContextUtils {
 	 * @param bf the BeanFactory to configure
 	 * @param servletContext the ServletContext that we're running within
 	 * @param servletConfig the ServletConfig of the containing Portlet
+	 *
+	 *
+	 * 注册web特有的environment beans ("contextParameters", "contextAttributes")到指定工厂中
+	 * 被WebApplicationContext所使用
 	 */
 	public static void registerEnvironmentBeans(ConfigurableListableBeanFactory bf,
 			@Nullable ServletContext servletContext, @Nullable ServletConfig servletConfig) {
 
 		if (servletContext != null && !bf.containsBean(WebApplicationContext.SERVLET_CONTEXT_BEAN_NAME)) {
+			// 注册servletContext单例
 			bf.registerSingleton(WebApplicationContext.SERVLET_CONTEXT_BEAN_NAME, servletContext);
 		}
 
 		if (servletConfig != null && !bf.containsBean(ConfigurableWebApplicationContext.SERVLET_CONFIG_BEAN_NAME)) {
+			// 注册servletConfig单例
 			bf.registerSingleton(ConfigurableWebApplicationContext.SERVLET_CONFIG_BEAN_NAME, servletConfig);
 		}
 
@@ -233,6 +242,8 @@ public abstract class WebApplicationContextUtils {
 			if (servletContext != null) {
 				Enumeration<?> paramNameEnum = servletContext.getInitParameterNames();
 				while (paramNameEnum.hasMoreElements()) {
+					//将servletContext参数配置放入集合中
+					//也就是web.xml中context-param标签里的param-name和param-value
 					String paramName = (String) paramNameEnum.nextElement();
 					parameterMap.put(paramName, servletContext.getInitParameter(paramName));
 				}
@@ -240,6 +251,7 @@ public abstract class WebApplicationContextUtils {
 			if (servletConfig != null) {
 				Enumeration<?> paramNameEnum = servletConfig.getInitParameterNames();
 				while (paramNameEnum.hasMoreElements()) {
+					// 将servletContext参数配置放入集合中
 					String paramName = (String) paramNameEnum.nextElement();
 					parameterMap.put(paramName, servletConfig.getInitParameter(paramName));
 				}
@@ -254,6 +266,7 @@ public abstract class WebApplicationContextUtils {
 				Enumeration<?> attrNameEnum = servletContext.getAttributeNames();
 				while (attrNameEnum.hasMoreElements()) {
 					String attrName = (String) attrNameEnum.nextElement();
+					// 将servletContext中设置的Attribute放入集合
 					attributeMap.put(attrName, servletContext.getAttribute(attrName));
 				}
 			}
