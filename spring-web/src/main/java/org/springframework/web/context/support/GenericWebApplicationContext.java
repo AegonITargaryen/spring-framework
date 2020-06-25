@@ -156,7 +156,7 @@ public class GenericWebApplicationContext extends GenericApplicationContext
 		}
 		// 注册web应用的scopes
 		WebApplicationContextUtils.registerWebApplicationScopes(beanFactory, this.servletContext);
-		// 注册和环境有关的beans
+		// 注册和环境有关的beans,手动注册servletContext（自动注入时，会忽略servletContext及其实现类）
 		WebApplicationContextUtils.registerEnvironmentBeans(beanFactory, this.servletContext);
 	}
 

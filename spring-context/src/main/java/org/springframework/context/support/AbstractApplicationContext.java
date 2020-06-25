@@ -532,15 +532,18 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			// 此时，所有的beanDefinition已经加载，但是还没有实例化
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
-				// prepareBeanFactory方法的扩展。bean factory后置处理器。允许用户自定义处理
+				// prepareBeanFactory方法的扩展。
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
 				// 调用 bean factory 后置处理器（实现接口BeanFactoryPostProcessor的bean）
+				// 此时bean definition已经注册完毕
+				// BeanFactoryPostProcessor 是针对 BeanFactory 的扩展，主要用在 bean 实例化之前，读取 bean 的定义，并可以修改它。在此时就调用了
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
 				// 实例化和注册beanFactory中扩展了BeanPostProcessor的bean
+				// BeanPostProcessor 是针对 bean 的扩展，主要用在 bean 实例化之后，执行初始化方法前后，允许开发者对 bean 实例进行修改。
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
@@ -690,6 +693,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		beanFactory.registerResolvableDependency(ApplicationContext.class, this);
 
 		// Register early post-processor for detecting inner beans as ApplicationListeners.
+		// 添加bean 的后置处理器
 		beanFactory.addBeanPostProcessor(new ApplicationListenerDetector(this));
 
 		// Detect a LoadTimeWeaver and prepare for weaving, if found.
