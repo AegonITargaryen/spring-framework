@@ -263,7 +263,7 @@ public class GenericApplicationContext extends AbstractApplicationContext implem
 	 *
 	 * 刷新beanFactory的serializationId
 	 *
-	 * beanFactory在默认构造函数里实例化，由 该类的子类 在构造函数里加载beanDefinitions
+	 * beanFactory在默认构造函数里实例化，由 该类的子类 通过registerBeanDefinition方法注册beanDefinitions
 	 */
 	@Override
 	protected final void refreshBeanFactory() throws IllegalStateException {

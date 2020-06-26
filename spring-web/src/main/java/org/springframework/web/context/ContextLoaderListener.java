@@ -33,6 +33,9 @@ import javax.servlet.ServletContextListener;
  * @since 17.02.2003
  * @see #setContextInitializers
  * @see org.springframework.web.WebApplicationInitializer
+ *
+ *
+ * 实现 ServletContextListener 接口，web应用启动或关闭时，由web服务器调用。是web服务的入口
  */
 public class ContextLoaderListener extends ContextLoader implements ServletContextListener {
 

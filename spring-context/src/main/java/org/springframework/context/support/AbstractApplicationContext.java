@@ -522,28 +522,31 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			prepareRefresh();
 
 			// Tell the subclass to refresh the internal bean factory.
-			// 刷新并获取新的beanFactory
+			// 刷新并获取新的beanFactory。在此处，将所有 bean 定义封装成 BeanDefinition，加载到 BeanFactory 中。
+			// beanDefinitionNames   beanDefinitionMap    aliasMap
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			// Prepare the bean factory for use in this context.
 			// 配置beanFactory，设置ClassLoader，添加bean后置处理器
+			// 注册3个默认环境 bean：environment、systemProperties 和 systemEnvironment
+			// 注册2个bean后置处理器：ApplicationContextAwareProcessor 和 ApplicationListenerDetector
 			prepareBeanFactory(beanFactory);
 
 			// 此时，所有的beanDefinition已经加载，但是还没有实例化
 			try {
 				// Allows post-processing of the bean factory in context subclasses.
-				// prepareBeanFactory方法的扩展。
+				// prepareBeanFactory方法的扩展。默认实现为空
 				postProcessBeanFactory(beanFactory);
 
 				// Invoke factory processors registered as beans in the context.
-				// 调用 bean factory 后置处理器（实现接口BeanFactoryPostProcessor的bean）
+				// 调用 bean factory 后置处理器（实现接口 BeanFactoryPostProcessor 的bean，包括其子类 BeanDefinitionRegistryPostProcessor）
 				// 此时bean definition已经注册完毕
-				// BeanFactoryPostProcessor 是针对 BeanFactory 的扩展，主要用在 bean 实例化之前，读取 bean 的定义，并可以修改它。在此时就调用了
+				// BeanFactoryPostProcessor 是针对 BeanFactory 的扩展，一般主要用在 bean 实例化之前，读取 bean definition，并修改。在此时就调用了
 				invokeBeanFactoryPostProcessors(beanFactory);
 
 				// Register bean processors that intercept bean creation.
 				// 实例化和注册beanFactory中扩展了BeanPostProcessor的bean
-				// BeanPostProcessor 是针对 bean 的扩展，主要用在 bean 实例化之后，执行初始化方法前后，允许开发者对 bean 实例进行修改。
+				// BeanPostProcessor 是针对 bean 的扩展，主要用在 bean 初始化前后，允许开发者对 bean 实例进行修改。
 				registerBeanPostProcessors(beanFactory);
 
 				// Initialize message source for this context.
@@ -555,7 +558,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				initApplicationEventMulticaster();
 
 				// Initialize other special beans in specific context subclasses.
-				// 在容器刷新的时候自定义逻辑
+				// 在容器刷新的时候自定义逻辑。默认实现为空
 				onRefresh();
 
 				// Check for listener beans and register them.
@@ -649,7 +652,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 * 刷新并获取新的 BeanFactory
 	 */
 	protected ConfigurableListableBeanFactory obtainFreshBeanFactory() {
+		// 刷新 BeanFactory，由AbstractRefreshableApplicationContext 或者 GenericApplicationContext实现
 		refreshBeanFactory();
+		// 获得刷新后的 BeanFactory
 		ConfigurableListableBeanFactory beanFactory = getBeanFactory();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Bean factory for " + getDisplayName() + ": " + beanFactory);
