@@ -354,6 +354,7 @@ public class ContextLoader {
 	 * @see org.springframework.web.context.support.XmlWebApplicationContext
 	 */
 	protected Class<?> determineContextClass(ServletContext servletContext) {
+		// 根据contextClass参数决定 ApplicationContext 的类型
 		String contextClassName = servletContext.getInitParameter(CONTEXT_CLASS_PARAM);
 		if (contextClassName != null) {
 			try {
@@ -365,6 +366,7 @@ public class ContextLoader {
 			}
 		}
 		else {
+			// 如果没有额外的配置,就是用默认的ContextClass也就是XmlWebApplicationContext.
 			contextClassName = defaultStrategies.getProperty(WebApplicationContext.class.getName());
 			try {
 				return ClassUtils.forName(contextClassName, ContextLoader.class.getClassLoader());
