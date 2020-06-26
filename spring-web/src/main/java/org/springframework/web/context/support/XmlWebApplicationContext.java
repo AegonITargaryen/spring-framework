@@ -92,7 +92,7 @@ public class XmlWebApplicationContext extends AbstractRefreshableWebApplicationC
 
 		// Allow a subclass to provide custom initialization of the reader,
 		// then proceed with actually loading the bean definitions.
-		// 为用户提供扩展位置
+		// 为用户提供扩展位置.默认为空
 		initBeanDefinitionReader(beanDefinitionReader);
 		// 加载 beanDefinition
 		loadBeanDefinitions(beanDefinitionReader);
@@ -125,6 +125,7 @@ public class XmlWebApplicationContext extends AbstractRefreshableWebApplicationC
 	protected void loadBeanDefinitions(XmlBeanDefinitionReader reader) throws IOException {
 		// 获取配置文件路径
 		String[] configLocations = getConfigLocations();
+		// 依次加载 BeanDefinition
 		if (configLocations != null) {
 			for (String configLocation : configLocations) {
 				reader.loadBeanDefinitions(configLocation);

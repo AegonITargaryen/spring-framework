@@ -118,6 +118,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 
 	/**
 	 * Register each bean definition within the given root {@code <beans/>} element.
+	 * 真正将<bean><bean/>节点转化为definition
 	 */
 	protected void doRegisterBeanDefinitions(Element root) {
 		// Any nested <beans> elements will cause recursion in this method. In
@@ -172,9 +173,12 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 				if (node instanceof Element) {
 					Element ele = (Element) node;
 					if (delegate.isDefaultNamespace(ele)) {
+						// 默认命名空间节点的处理，例如： <bean id="test" class="" />.定义在 http://www.springframework.org/schema/beans
 						parseDefaultElement(ele, delegate);
 					}
 					else {
+						// 自定义命名空间节点的处理，例如：<context:component-scan/>、<aop:aspectj-autoproxy/>
+						// 定义在非http://www.springframework.org/schema/beans的命名空间中
 						delegate.parseCustomElement(ele);
 					}
 				}
