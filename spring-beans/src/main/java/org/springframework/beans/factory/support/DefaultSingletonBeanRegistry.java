@@ -176,14 +176,27 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @param beanName the name of the bean to look for
 	 * @param allowEarlyReference whether early references should be created or not
 	 * @return the registered singleton object, or {@code null} if none found
+	 *
+	 *
+	 * 获取bean单例。解决循环引用问题！！
+	 * 三级缓存：singletonObjects， earlySingletonObjects， singletonFactories
 	 */
 	@Nullable
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+		// 从单例对象缓存中获取beanName对应的单例对象
+		// singletonObjects 缓存：beanName -> 单例 bean 对象
 		Object singletonObject = this.singletonObjects.get(beanName);
+		// 如果单例对象缓存中没有，并且该beanName对应的单例bean正在创建中
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
 			synchronized (this.singletonObjects) {
+				// 从早期单例对象缓存中获取单例对象（earlySingletonObjects里的对象的都是通过提前曝光的ObjectFactory创建出来的，还未进行属性填充等操作）
+				// earlySingletonObjects 缓存：beanName -> 早期单例 bean 对象
 				singletonObject = this.earlySingletonObjects.get(beanName);
+				// 如果在早期单例对象缓存中也没有，并且允许创建早期单例对象引用
 				if (singletonObject == null && allowEarlyReference) {
+					// 从单例工厂缓存中获取beanName的单例工厂
+					// singletonFactories 缓存的作用就是存放不完整的 bean 实例，提前曝光
+					// singletonFactories 缓存：beanName -> ObjectFactory
 					ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
 					if (singletonFactory != null) {
 						singletonObject = singletonFactory.getObject();

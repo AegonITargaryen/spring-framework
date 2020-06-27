@@ -621,12 +621,16 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 		return exposedObject;
 	}
 
+	// DefaultListableBeanFactory 使用该方法
 	@Override
 	@Nullable
 	protected Class<?> predictBeanType(String beanName, RootBeanDefinition mbd, Class<?>... typesToMatch) {
+		// 拿到beanName的类型
 		Class<?> targetType = determineTargetType(beanName, mbd, typesToMatch);
 		// Apply SmartInstantiationAwareBeanPostProcessors to predict the
 		// eventual type after a before-instantiation shortcut.
+		// 应用SmartInstantiationAwareBeanPostProcessors后置处理器，来预测实例化的最终类型
+		// 如果mbd是合成的，需要预测真实类型
 		if (targetType != null && !mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
 			for (BeanPostProcessor bp : getBeanPostProcessors()) {
 				if (bp instanceof SmartInstantiationAwareBeanPostProcessor) {

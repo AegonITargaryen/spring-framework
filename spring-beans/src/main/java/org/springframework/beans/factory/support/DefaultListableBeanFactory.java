@@ -727,13 +727,19 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 		// Iterate over a copy to allow for init methods which in turn register new bean definitions.
 		// While this may not be part of the regular factory bootstrap, it does otherwise work fine.
+		// 创建 beanDefinitionNames 的副本 beanNames 用于后续的遍历，以允许init等方法注册新的bean定义
 		List<String> beanNames = new ArrayList<>(this.beanDefinitionNames);
 
 		// Trigger initialization of all non-lazy singleton beans...
+		// 遍历 beanNames，触发所有非懒加载单例 bean 的初始化
 		for (String beanName : beanNames) {
+			// 将 ChildBeanDefinition 和 GenericBeanDefinition 转换为 RootBeanDefinition （父子 Definition）
 			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
+			// 不是抽象类、是单例、不是懒加载
 			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
+				// 判断是否为 FactoryBean
 				if (isFactoryBean(beanName)) {
+					// 通过getBean(&beanName)拿到的是FactoryBean本身；通过getBean(beanName)拿到的是FactoryBean创建的Bean实例
 					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
 					if (bean instanceof FactoryBean) {
 						final FactoryBean<?> factory = (FactoryBean<?>) bean;
@@ -747,18 +753,21 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 							isEagerInit = (factory instanceof SmartFactoryBean &&
 									((SmartFactoryBean<?>) factory).isEagerInit());
 						}
+						// 判断该FactoryBean是否急切地想要实例化，如是，则实例化
 						if (isEagerInit) {
 							getBean(beanName);
 						}
 					}
 				}
 				else {
+					// 普通bean，直接创建实例
 					getBean(beanName);
 				}
 			}
 		}
 
 		// Trigger post-initialization callback for all applicable beans...
+		// 遍历beanNames，触发所有 SmartInitializingSingleton 的后初始化回调，即 afterSingletonsInstantiated 方法
 		for (String beanName : beanNames) {
 			Object singletonInstance = getSingleton(beanName);
 			if (singletonInstance instanceof SmartInitializingSingleton) {
