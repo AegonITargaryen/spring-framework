@@ -1285,6 +1285,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 					// 调用 SmartInstantiationAwareBeanPostProcessor 的 determineCandidateConstructors 方法
 					// 该方法可以返回要用于 beanClass 的候选构造函数
 					// 例如：使用@Autowired注解修饰构造函数，则该构造函数在这边会被AutowiredAnnotationBeanPostProcessor找到
+					// 关注点
 					Constructor<?>[] ctors = ibp.determineCandidateConstructors(beanClass, beanName);
 					if (ctors != null) {
 						// 如果ctors不为空，则不再继续执行其他的SmartInstantiationAwareBeanPostProcessor

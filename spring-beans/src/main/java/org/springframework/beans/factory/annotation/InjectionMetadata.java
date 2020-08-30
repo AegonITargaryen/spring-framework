@@ -63,11 +63,18 @@ public class InjectionMetadata {
 	}
 
 
+	/**
+	 * 检查元数据中的注解信息
+	 * @param beanDefinition
+	 */
 	public void checkConfigMembers(RootBeanDefinition beanDefinition) {
 		Set<InjectedElement> checkedElements = new LinkedHashSet<>(this.injectedElements.size());
+		// 遍历检查所有要注入的元素
 		for (InjectedElement element : this.injectedElements) {
 			Member member = element.getMember();
+			// 如果beanDefinition的externallyManagedConfigMembers属性不包含该member
 			if (!beanDefinition.isExternallyManagedConfigMember(member)) {
+				// 将该member添加到beanDefinition的externallyManagedConfigMembers属性，并将element添加到checkedElements
 				beanDefinition.registerExternallyManagedConfigMember(member);
 				checkedElements.add(element);
 				if (logger.isDebugEnabled()) {
@@ -78,7 +85,15 @@ public class InjectionMetadata {
 		this.checkedElements = checkedElements;
 	}
 
+	/**
+	 * 执行@Autowired属性注入或方法注入
+	 * @param target
+	 * @param beanName
+	 * @param pvs
+	 * @throws Throwable
+	 */
 	public void inject(Object target, @Nullable String beanName, @Nullable PropertyValues pvs) throws Throwable {
+		// 如果checkedElements存在，则使用checkedElements，否则使用injectedElements
 		Collection<InjectedElement> checkedElements = this.checkedElements;
 		Collection<InjectedElement> elementsToIterate =
 				(checkedElements != null ? checkedElements : this.injectedElements);
@@ -87,6 +102,8 @@ public class InjectionMetadata {
 				if (logger.isDebugEnabled()) {
 					logger.debug("Processing injected element of bean '" + beanName + "': " + element);
 				}
+				// 解析@Autowired注解生成的元数据类：AutowiredFieldElement、AutowiredMethodElement
+				// 这两个类继承InjectionMetadata.InjectedElement，各自重写了inject方法。
 				element.inject(target, beanName, pvs);
 			}
 		}
